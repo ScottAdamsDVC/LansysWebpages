@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Lancaster Configuration Splicer Configuration</title>
+
+<!-- CSS -->
+<link href="style/css/transdmin.css" rel="stylesheet" type="text/css" media="screen" />
+<!--[if IE 6]><link rel="stylesheet" type="text/css" media="screen" href="style/css/ie6.css" /><![endif]-->
+<!--[if IE 7]><link rel="stylesheet" type="text/css" media="screen" href="style/css/ie7.css" /><![endif]-->
+
+<!-- JavaScripts-->
+<script type="text/javascript" src="style/js/jquery.js"></script>
+<script type="text/javascript" src="style/js/jNice.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript" src="js/jquery-1.10.0.min.js"></script>
+    <script type="text/javascript" src="js/jquery.getParams.js"></script>
+    <script type="text/javascript" src="js/params.js"></script>
+    <script type="text/javascript">
+
+    $(document).ready(function() {
+	    var splicer = $.getURLParam("splicer");
+	    if (splicer ==null) {
+	 		splicer = "0";
+		}
+		
+		
+    	var jqxhr = $.get("request", function(data) {
+			var $Splicer = $(data).find('Splicer');
+			var string = 'Initial';
+			string = $Splicer.attr('splicername');
+			$("#splicername").val (string );
+			string = $Splicer.attr('StreamingIPAddr');
+			$("#StreamingIPAddr").val (string );
+			string = $Splicer.attr('ControlIPAddr');
+			$("#ControlIPAddr").val (string );
+			string = $Splicer.attr('PortBase');
+			$("#Portbase").val (string );
+		})
+		.done(function() {  })
+		.fail(function() {  })
+		.always(function() {  });
+
+		$('#splicer').html(splicer); //splicer number from the url
+		$("#breadcrumbs span").html("Splicer: "); //update the breadcrumbs field
+	    $("#save-button").click(function(event) {
+	          event.preventDefault();
+	          splicerparams[splicer].splicername= $("#splicername").val();
+	          splicerparams[splicer].StreamingIPAddr= $("#StreamingIPAddr").val();
+	          splicerparams[splicer].ControlIPAddr= $("#ControlIPAddr").val();
+	          splicerparams[splicer].PortBase= $("#PortBase").val();
+	          
+	          $.ajax({
+	            type: 'POST',
+	            dataType: 'json',
+	            url: 'save',
+	            data: {Update:"Splicer", splicerparams: splicerparams[splicer] },
+	            beforeSend: function(){},
+	            success: function(msg) {},
+	            error:function (){} 
+	          });
+	        });
+     });
+    </script>
+	<div id="wrapper">
+    	<!-- h1 tag stays for the logo, you can use the a tag for linking the index page -->
+    	<h1><a href="#"><span>DVC Lancaster Channel Settings</span></a></h1>
+        
+        <!-- You can name the links with lowercase, they will be transformed to uppercase by CSS, we prefered to name them with uppercase to have the same effect with disabled stylesheet -->
+        <ul id="mainNav">
+        	<li><a href="index.html">System Status</a></li> <!-- Use the "active" class for the active menu item  -->
+        	<li><a href="system.html">System Settings</a></li>
+        	<li><a href="splicer.html" class="active">Splicer Settings</a></li>
+        	<li><a href="channel.html">Channel Settings</a></li>
+        	<li class="logout"><a href="#">LOGOUT</a></li>
+        </ul>
+        <!-- // #end mainNav -->
+        
+        <div id="containerHolder">
+			<div id="container">
+        		<div id="sidebar">
+                	<ul class="sideNav">
+                    	<li><a href="#" class="active"></a></li>
+                    </ul>
+                    <!-- // .sideNav -->
+                </div>    
+                <!-- // #sidebar -->
+                
+                <!-- h2 stays for breadcrumbs -->
+                <div id="breadcrumbs"><h2><a href="splicer.html">Splicer Configuration</a> &raquo; <a href="#" class="active"><span></span></a></h2></div>
+                <div id="main">
+					<h3>Splicer Settings</h3>
+						<table class="parametersTable"><tbody>
+						<tr>
+						<td>Splicer Name:</td><td><input type='text' id='splicername' value='' /></td>
+						</tr>
+						<tr class="odd">
+						<td>Streaming IP Address:</td><td><input type='text' id='StreamingIPAddr' value='' /></td>
+						</tr>
+						<tr>
+						<td>Control IP Address:</td><td><input type='text' id='ControlIPAddr' value='' /></td>
+						</tr>
+						<tr class="odd">
+						<td>PortBase:</td><td><input type='text' id='PortBase' value='' /></td>
+						</tr>
+						</tbody></table>
+                        <p>&nbsp;</p>
+     				<input type="submit" value="Save" id="save-button"> </input>
+    			</div>
+                <!-- // #main -->
+                <div class="clear"></div>
+            </div>
+            <!-- // #container -->
+        </div>	
+        <!-- // #containerHolder -->
+        
+        <p id="footer"><a href="http://www.digitalvideocommunications.com">Digital Video Communications, Inc.</a></p>
+    </div>
+    <!-- // #wrapper -->
+</body>
+</html>

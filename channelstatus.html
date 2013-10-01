@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Lancaster Configuration Channel Status</title>
+
+<!-- CSS -->
+<link href="style/css/transdmin.css" rel="stylesheet" type="text/css" media="screen" />
+<link rel="stylesheet" href="style/css/jquery-ui.css"/>
+<!--[if IE 6]><link rel="stylesheet" type="text/css" media="screen" href="style/css/ie6.css" /><![endif]-->
+<!--[if IE 7]><link rel="stylesheet" type="text/css" media="screen" href="style/css/ie7.css" /><![endif]-->
+
+<!-- JavaScripts-->
+<script type="text/javascript" src="style/js/jquery.js"></script>
+<script type="text/javascript" src="style/js/jNice.js"></script>
+<style>#slider { margin: 10px; }	</style>
+<style type="text/css">
+.style1 {
+	color: #000080;
+}
+.style2 {
+	line-height: 100%;
+}
+.style3 {
+	vertical-align: middle;
+}
+</style>
+</head>
+
+<body>
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery.getParams.js"></script>
+    <script type="text/javascript" src="js/params.js"></script>
+    <script src="js/jquery-ui.js"></script>
+   <script type="text/javascript">
+    var channel = 0;
+    $(document).ready(function() {
+    	//Figure out which channel and splicer we are on from the 'command line' in the browser
+ 	    channel = $.getURLParam("channel");
+	    if (channel==null) {
+	 		channel = "0";
+		}
+		var $channeltable = $("#channelstatustable");
+		//We are going to call this right away, and then every 5 seconds
+		function GetStatus()
+	    {
+	    	var string = 'Initial';
+			var iChannel = '0';
+			var spotnumber = $('#spotnumber').val();
+	    	var jqxhr = $.get("status", function(data) {
+				$(data).find('Channel').each (function()
+				{
+					var $Channel = $(this);
+					string = $Channel.attr('GenlockStatus');
+					$("#GenlockStatus").text (string );
+					string = $Channel.attr('SwitchVersion');
+					$("#SwitchVersion").text (string );
+					var $Network = $Channel.find('Network');
+					string = $Network.attr('PeakdB');
+					$("#NetworkPeak").text (string );
+					string = $Network.attr('MatchdB');
+					$("#NetworkMatch").text (string );
+					string = $Network.attr('ALGaindB');
+					$("#NetworkALGain").text (string );
+					string = $Network.attr('ARGaindB');
+					$("#NetworkARGain").text (string );
+					var $Decoder = $Channel.find('Decoder');
+					string = $Decoder.attr('PeakdB');
+					$("#DecoderPeak").text (string );
+					string = $Decoder.attr('ALGaindB');
+					$("#DecoderALGain").text (string );
+					string = $Decoder.attr('ARGaindB');
+					$("#DecoderARGain").text (string );
+					string = $Decoder.attr('SpotCount');
+					$("#SpotCount").text (string );
+					var SpotCount = string;
+					if( channel == iChannel++)
+					{
+						while( $("#channelstatustable tr").length > 12)
+							$("#channelstatustable tr:last").remove();
+						var iSpot = 0;
+						$Channel.find('Spot').each (function()
+						{
+							if( iSpot++ == SpotCount )
+							return false;
+							var $Spot= $(this);
+							var oddness = " class=odd";
+							if(iSpot & 1) oddness = "";
+							$channeltable.append("<tr" + oddness + "><td>Spot " + iSpot + " Levels: </td><td>" + $Spot.attr('PeakdB') + "</td></tr>");
+							$channeltable.append("<tr" + oddness + "><td>Spot " + iSpot + " Stats: </td><td>" + $Spot.attr('Stats') + "</td></tr>");
+							$channeltable.append("<tr" + oddness + "><td>Spot " + iSpot + " Status: </td><td>" + $Spot.attr('Status') + "</td></tr>");
+						})
+						return false;
+					}
+				})
+			})
+			.done(function() {  })
+			.fail(function() {  })
+			.always(function() {  });
+		}
+		//Here is where we get the configuration data from the server initially
+    	var jqxhr = $.get("request", function(data) {
+			var iChannel = '0';
+			$(data).find('Channel').each (function()
+			{
+				var $Channel = $(this);
+				var string = 'Initial';
+				string = $Channel.attr('channelname');
+				$("#channelname").text (string );
+				string = $Channel.attr('zonename');
+				$("#zonename").text (string );
+				if( channel == iChannel++)
+					return false;
+			})
+		})
+		.done(function() {  })
+		.fail(function() {  })
+		.always(function() {  });
+		GetStatus();
+		setTimeout(GetStatus,2000);
+
+		$('#channel').html(channel); //channel number from the url
+		$("#breadcrumbs span").html(" Channel: " + channel); //update the breadcrumbs field
+    });
+    </script>
+	<div id="wrapper">
+    	<!-- h1 tag stays for the logo, you can use the a tag for linking the index page -->
+    	<h1><a href="#"><span>DVC Lancaster Channel Status</span></a></h1>
+        
+        <!-- You can name the links with lowercase, they will be transformed to uppercase by CSS, we prefered to name them with uppercase to have the same effect with disabled stylesheet -->
+		<ul id="mainNav">
+        	<li><a href="index.html" class="active">System Status</a></li> <!-- Use the "active" class for the active menu item  -->
+        	<li><a href="system.html">System Settings</a></li>
+        	<li><a href="splicer.html">Splicer Settings</a></li>
+        	<li><a href="channel.html">Channel Settings</a></li>
+        	<li class="logout"><a href="#">LOGOUT</a></li>
+        </ul>
+        <!-- // #end mainNav -->
+        
+        <div id="containerHolder">
+			<div id="container">
+        		<div id="sidebar">
+                	<ul class="sideNav">
+                    	<li><a href="systemstatus.html">System Info</a></li>
+                    	<li><a href="splicerstatus.html">Splicer</a></li>
+                    	<li><a href="channelstatus.html?channel=0" class="active">Channel 0</a></li>
+                    	<li><a href="channelstatus.html?channel=1" class="active">Channel 1</a></li>
+                    	<li><a href="channelstatus.html?channel=2" class="active">Channel 2</a></li>
+                    	<li><a href="channelstatus.html?channel=3" class="active">Channel 3</a></li>
+                    </ul>
+                    <!-- // .sideNav -->
+                </div>    
+                <!-- // #sidebar -->
+                
+                <!-- h2 stays for breadcrumbs -->
+                <div id="breadcrumbs"><h2><a href="channelstatus.html">Channel Status</a> &raquo; <a href="#" class="active"><span></span></a></h2></div>
+                
+                <div id="main">
+					<h3>Channel Status</h3>
+                    	<table id="channelstatustable">
+							<tr>
+                                <td>Channel Name</td>
+                                <td><span id="channelname">Channel</span></td>
+                            </tr>                        
+							<tr class="odd">
+                                <td>Zone Name</td>
+                                <td><span id="zonename">Zone</span></td>
+                            </tr>                        
+							<tr>
+								<td>Switch Version:</td>
+								<td><span id="SwitchVersion"></span></td>
+							</tr>
+							<tr class="odd">
+								<td>Genlock Status:</td>
+								<td><span id="GenlockStatus"></span></td>
+							</tr>
+							<tr>
+								<td>Network Levels:</td>
+								<td><span id="NetworkPeak"></span></td>
+							</tr>
+							<tr class="odd">
+								<td>Level Matching:</td>
+								<td><span id="NetworkMatch"></span></td>
+							</tr>
+							<tr>
+								<td>Network Gain Left:</td>
+								<td><span id="NetworkALGain"></span></td>
+							</tr>
+							<tr class="odd">
+								<td>Network Gain Right:</td>
+								<td><span id="NetworkARGain"></span></td>
+							</tr>
+							<tr>
+								<td>Decoder Levels:</td>
+								<td><span id="NetworkPeak"></span></td>
+							</tr>
+							<tr class="odd">
+								<td>Decoder Gain Left:</td>
+								<td><span id="DecoderALGain"></span></td>
+							</tr>
+							<tr>
+								<td>Decoder Gain Right:</td>
+								<td><span id="DecoderARGain"></span></td>
+							</tr>
+							<tr class="odd">
+								<td>Last Played Spot Count:</td>
+								<td><span id="SpotCount"></span></td>
+							</tr>
+						</table>
+    			</div>
+                <!-- // #main -->
+                <div class="clear"></div>
+            </div>
+            <!-- // #container -->
+        </div>	
+        <!-- // #containerHolder -->
+        
+        <p id="footer"><a href="http://www.digitalvideocommunications.com">Digital Video Communications, Inc.</a></p>
+    </div>
+    <!-- // #wrapper -->
+</body>
+</html>

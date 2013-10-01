@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Lancaster Configuration System Status</title>
+
+<!-- CSS -->
+<link href="style/css/transdmin.css" rel="stylesheet" type="text/css" media="screen" />
+<link rel="stylesheet" href="style/css/jquery-ui.css"/>
+<!--[if IE 6]><link rel="stylesheet" type="text/css" media="screen" href="style/css/ie6.css" /><![endif]-->
+<!--[if IE 7]><link rel="stylesheet" type="text/css" media="screen" href="style/css/ie7.css" /><![endif]-->
+
+<!-- JavaScripts-->
+<script type="text/javascript" src="style/js/jquery.js"></script>
+<script type="text/javascript" src="style/js/jNice.js"></script>
+<script>
+  $(function() {
+    $( "#accordion" ).accordion(
+    {
+    	heightStyle: 'content'
+    });
+  });
+</script>
+<style>
+#main table {
+	border-top: 1px solid #ddd;
+	width: 650px;
+}
+</style>
+
+</head>
+
+<body>
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.js"></script>
+    <script type="text/javascript">
+    
+    
+
+
+    $(document).ready(function() {
+    
+		function GetStatus()
+	    {
+	    	var string = 'Initial';
+	    	var jqxhr = $.get("status", function(data) {
+				var $System = $(data).find('System');
+				string = $System.attr('SystemName');
+				$("#SystemName").text (string );
+				string  = $System.attr('Model');
+				$("#Model").text (string );
+				string  = $System.attr('SerialNumber');
+				$("#SerialNumber").text (string );
+				string  = $System.attr('LiveStatus');
+				$("#LiveStatus").text (string );
+				string  = $System.attr('CurrentTime');
+				$("#CurrentTime").text (string );
+				string  = $System.attr('SplicerCnt');
+				$("#SplicerCnt").text (string );
+				var $Power = $(data).find('Power');
+				string = $Power.attr('p12V');
+				$("#p12V").text (string );			
+				string = $Power.attr('n12V');
+				$("#n12V").text (string );			
+				string = $Power.attr('p5V');
+				$("#p5V").text (string );			
+				string = $Power.attr('p3p3V');
+				$("#p3p3V").text (string );			
+				string = $Power.attr('p1p8V');
+				$("#p1p8V").text (string );			
+				string = $Power.attr('p1p3V');
+				$("#p1p3V").text (string );			
+				string = $Power.attr('p1p5V');
+				$("#p1p5V").text (string );			
+				string = $Power.attr('p0p7V');
+				$("#p0p7V").text (string );
+				var $Temperature = $(data).find('Temp');
+				string = $Temperature.attr('SOCA');
+				$("#SOCA").text (string );
+				string = $Temperature.attr('SOCB');
+				$("#SOCB").text (string );
+				string = $Temperature.attr('Ambient');
+				$("#Ambient").text (string );
+				var $Fan = $(data).find('Fan');
+				string = $Fan.attr('Speed');
+				$("#Speed").text (string );
+				string = $Fan.attr('Mode');
+				$("#Mode").text (string );
+				var $Counts = $(data).find('Counts');
+				string = $Counts.attr('Hours');
+				$("#Hours").text (string );
+				string = $Counts.attr('SpotCnt');
+				$("#SpotCnt").text (string );
+				string = $Counts.attr('BootTime');
+				$("#BootTime").text (string );
+				string = $Counts.attr('ErrorCnt');
+				$("#ErrorCnt").text (string );
+				string = $Counts.attr('AlarmCnt');
+				$("#AlarmCnt").text (string );
+				var $HWVersion = $(data).find('HWVersion');
+				string = $HWVersion.attr('SystemVersion');
+				$("#SystemVersion").text (string );
+				string = $HWVersion.attr('BoardVersion');
+				$("#BoardVersion").text (string );
+				string = $HWVersion.attr('SYSVersion');
+				$("#SYSVersion").text (string );
+				string = $HWVersion.attr('TBCVersion');
+				$("#TBCVersion").text (string );
+				string = $HWVersion.attr('FPVersion');
+				$("#FPVersion").text (string );
+				string = $HWVersion.attr('FPCVersion');
+				$("#FPCVersion").text (string );
+				var $SWVersion = $(data).find('SWVersion');
+				string = $SWVersion.attr('AppVersion');
+				$("#AppVersion").text (string );
+				string = $SWVersion.attr('RFSVersion');
+				$("#RFSVersion").text (string );
+				string = $SWVersion.attr('KernelVersion');
+				$("#KernelVersion").text (string );
+				string = $SWVersion.attr('BootVersion');
+				$("#BootVersion").text (string );
+			})
+			.done(function() {  })
+			.fail(function() {  })
+			.always(function() {  });
+		}
+		GetStatus();
+		$( "#accordion" ).on('accordionactivate', function( event, ui ) { GetStatus();});
+
+     
+		//setInterval(GetStatus,5000);
+
+    });
+
+
+    </script>
+	<div id="wrapper">
+    	<!-- h1 tag stays for the logo, you can use the a tag for linking the index page -->
+    	<h1><a href="#"><span>DVC Lancaster System Status</span></a></h1>
+        
+        <!-- You can name the links with lowercase, they will be transformed to uppercase by CSS, we prefered to name them with uppercase to have the same effect with disabled stylesheet -->
+		<ul id="mainNav">
+        	<li><a href="index.html" class="active">System Status</a></li> <!-- Use the "active" class for the active menu item  -->
+        	<li><a href="system.html">System Settings</a></li>
+        	<li><a href="splicer.html">Splicer Settings</a></li>
+        	<li><a href="channel.html">Channel Settings</a></li>
+        	<li class="logout"><a href="#">LOGOUT</a></li>
+        </ul>
+        <!-- // #end mainNav -->
+        
+        <div id="containerHolder">
+			<div id="container">
+        		<div id="sidebar">
+                	<ul class="sideNav">
+                     	<li><a href="systemstatus.html" class="active">System Info</a></li>
+                     	<li><a href="splicerstatus.html">Splicer Status</a></li>
+                    	<li><a href="video.html?channel=0">Channel 0</a></li>
+                    	<li><a href="video.html?channel=1">Channel 1</a></li>
+                    	<li><a href="video.html?channel=2">Channel 2</a></li>
+                    	<li><a href="video.html?channel=3">Channel 3</a></li>
+                    </ul>
+                    <!-- // .sideNav -->
+                </div>    
+                <!-- // #sidebar -->
+                
+                <!-- h2 stays for breadcrumbs -->
+                <h2><a href="#">System Status</a> &raquo; <a href="#" class="active">System</a></h2>
+                <div id="main">
+				<div id="accordion">
+					<h3>System Information</h3>
+					<div>
+						<table><tbody>
+						<tr>
+						<td>System Name:</td><td><span id="SystemName"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>Model:</td><td><span id="Model"></span></td>
+						</tr>
+						<tr>
+						<td>Serial Number:</td><td><span id="SerialNumber"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>Live Status:</td><td><span id="LiveStatus"></span></td>
+						</tr>
+						<tr>
+						<td>Current Time:</td><td><span id="CurrentTime"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>Splicer Count:</td><td><span id="SplicerCnt"></span></td>
+						</tr>
+						</tbody></table>
+						</div>
+						<h3>Power Status</h3>
+						<div>
+						<table width="600px"><tbody>
+						<tr>
+						<td>+12 volts:</td><td><span id="p12V"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>-12 Volts:</td><td><span id="n12V"></span></td>
+						</tr>
+						<tr>
+						<td>+5 Volts:</td><td><span id="p5V"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>+3.3 Volts:</td><td><span id="p3p3V"></span></td>
+						</tr>
+						<tr>
+						<td>+1.8 Volts:</td><td><span id="p1p8V"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>+1.5 Volts:</td><td><span id="p1p5V"></span></td>
+						</tr>
+						<tr>
+						<td>+1.3 Volts:</td><td><span id="p1p3V"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>+0.7 Volts:</td><td><span id="p0p7V"></span></td>
+						</tr>
+						</tbody></table>
+						</div>
+						<h3>Temperature Status</h3>
+						<div>
+						<table width="600px"><tbody>
+						<tr>
+						<td>SOC A:</td><td><span id="SOCA"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>SOC B:</td><td><span id="SOCB"></span></td>
+						</tr>
+						<tr>
+						<td>Ambient:</td><td><span id="Ambient"></span></td>
+						</tr>
+						</tbody></table>
+						</div>
+						<h3>Fan Status</h3>
+						<div>
+						<table width="600px"><tbody>
+						<tr>
+						<td>Fan Speed:</td><td><span id="Speed"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>Fan Mode:</td><td><span id="Mode"></span></td>
+						</tr>
+						</tbody></table>
+						</div>
+						<h3>Counts Status</h3>
+						<div>
+						<table width="600px"><tbody>
+						<tr>
+						<td>Hours:</td><td><span id="Hours"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>Spot Count:</td><td><span id="SpotCnt"></span></td>
+						</tr>
+						<tr>
+						<td>Boot Time:</td><td><span id="BootTime"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>Errors:</td><td><span id="ErrorCnt"></span></td>
+						</tr>
+						<tr>
+						<td>Alarms:</td><td><span id="AlarmCnt"></span></td>
+						</tr>
+						</tbody></table>
+						</div>
+						<h3>Hardware Version</h3>
+						<div>
+						<table width="600px"><tbody>
+						<tr>
+						<td>System Version:</td><td><span id="SystemVersion"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>Board Version:</td><td><span id="BoardVersion"></span></td>
+						</tr>
+						<tr>
+						<td>SYS Version:</td><td><span id="SYSVersion"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>TBC Version:</td><td><span id="TBCVersion"></span></td>
+						</tr>
+						<tr>
+						<td>FP Version:</td><td><span id="FPVersion"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>FPC Version:</td><td><span id="FPCVersion"></span></td>
+						</tr>
+						</tbody></table>
+						</div>
+						<h3>Software Version</h3>
+						<div>
+						<table width="600px"><tbody>
+						<tr>
+						<td>Application Version:</td><td><span id="AppVersion"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>RF Version:</td><td><span id="RFSVersion"></span></td>
+						</tr>
+						<tr>
+						<td>Kernel Version:</td><td><span id="KernelVersion"></span></td>
+						</tr>
+						<tr class="odd">
+						<td>Boot Version:</td><td><span id="BootVersion"></span></td>
+						</tr>
+						</tbody></table>
+						</div>
+    			</div>
+                <!-- // #main -->
+    			</div>
+                <div class="clear"></div>
+            </div>
+            <!-- // #container -->
+        </div>	
+        <!-- // #containerHolder -->
+        
+        <p id="footer"><a href="http://www.digitalvideocommunications.com">Digital Video Communications, Inc.</a></p>
+    </div>
+    <!-- // #wrapper -->
+</body>
+</html>

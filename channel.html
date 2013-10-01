@@ -1,0 +1,482 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Lancaster Configuration Channel Configuration</title>
+
+<!-- CSS -->
+<link href="style/css/transdmin.css" rel="stylesheet" type="text/css" media="screen" />
+<link rel="stylesheet" href="style/css/jquery-ui.css"/>
+<!--[if IE 6]><link rel="stylesheet" type="text/css" media="screen" href="style/css/ie6.css" /><![endif]-->
+<!--[if IE 7]><link rel="stylesheet" type="text/css" media="screen" href="style/css/ie7.css" /><![endif]-->
+
+<!-- JavaScripts-->
+<script type="text/javascript" src="style/js/jquery.js"></script>
+<script type="text/javascript" src="style/js/jNice.js"></script>
+<style>#slider { margin: 10px; }	</style>
+<style type="text/css">
+.style2 {
+	line-height: 100%;
+}
+.style3 {
+	vertical-align: middle;
+}
+</style>
+</head>
+
+<body>
+    <script type="text/javascript" src="js/jquery-1.10.0.min.js"></script>
+    <script type="text/javascript" src="js/jquery.getParams.js"></script>
+    <script type="text/javascript" src="js/params.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.js"></script>
+   <script type="text/javascript">
+    var channel = 0;
+    $(document).ready(function() {
+    	//Figure out which channel and splicer we are on from the 'command line' in the browser
+ 	    channel = $.getURLParam("channel");
+	    if (channel==null) {
+	 		channel = "0";
+		}
+		var networkgainenabled = false;
+		var levelmatchingenabled = true;
+		var Initialized = false;
+		function DisableSliders()
+	    {
+			$( "#GainNetworkLeft" ).slider('option','disabled', !networkgainenabled );
+	        $( "#GainNetworkRight" ).slider('option','disabled', !networkgainenabled );
+	        $( "#GainDecoderLeft" ).slider('option','disabled', levelmatchingenabled  );
+	        $( "#GainDecoderRight" ).slider('option','disabled', levelmatchingenabled  );
+	    }
+		//Here is where we get the configuration data from the server initially
+    	var jqxhr = $.get("request", function(data) {
+			var iChannel = '0';
+			$(data).find('Channel').each (function()
+			{
+				var $Channel = $(this);
+				var string = 'Initial';
+				var enabled = true;
+				string = $Channel.attr('channelname');
+				$("#channelname").text (string );
+				string = $Channel.attr('zonename');
+				$("#zonename").text (string );
+				string = $Channel.attr('trigger');
+				$("#trigger").val (string );
+				string = $Channel.attr('cutoff');
+				$("#cutoff").val (string );
+				string = $Channel.attr('entrydelim');
+				$("#entrydelim").val (string );
+				string = $Channel.attr('exitdelim');
+				$("#exitdelim").val (string );
+				string = $Channel.attr('exitflag');
+				$("#exitflag").val (string );
+				string = $Channel.attr('genlock');
+				$("#genlock").val (string );
+				string = $Channel.attr('agcdec');
+				$("#agcdec").val (string );
+				string = $Channel.attr('preroll');
+				$("#preroll").val (string );
+				string = $Channel.attr('postblack');
+				$("#postblack").val (string );
+				string = $Channel.attr('toneone');
+				$("#toneone").val (string );
+				string = $Channel.attr('tonetwo');
+				$("#tonetwo").val (string );
+				string = $Channel.attr('tonethree');
+				$("#tonethree").val (string );
+				string = $Channel.attr('tonefour');
+				$("#tonefour").val (string );
+				string = $Channel.attr('swbacktime');
+				$("#swbacktime").val (string );
+				string = $Channel.attr('latestart');
+				$("#latestart").val (string );
+				string = $Channel.attr('earlystop');
+				$("#earlystop").val (string );
+				string = $Channel.attr('pal');
+				$("#pal").val (string );
+				string = $Channel.attr('frm_sec');
+				$("#frm_sec").val (string );
+				string = $Channel.attr('bypass');
+				$("#bypass").val (string );
+				string = $Channel.attr('vnet_agc');
+				$("#vnet_agc").val (string );
+				string = $Channel.attr('vdec_agc');
+				$("#vdec_agc").val (string );
+				
+				string = $Channel.attr('GainNetworkLeft');
+				channelgains[channel].GainNetworkLeft = string;
+				
+				string = $Channel.attr('GainNetworkRight');
+				channelgains[channel].GainNetworkRight= string;
+				
+				string = $Channel.attr('GainDecoderLeft');
+				channelgains[channel].GainDecoderLeft= string;
+				
+				string = $Channel.attr('GainDecoderRight');
+				channelgains[channel].GainDecoderRight= string;
+				
+				string = $Channel.attr('AudioMute');
+				channelgains[channel].AudioMute= string ;
+				
+				string = $Channel.attr('LevelMatchingEnable');
+				channelgains[channel].LevelMatchingEnable= string ;
+				
+				string = $Channel.attr('NetworkGainEnable');
+				channelgains[channel].NetworkGainEnable = string ;
+				
+				$("#GainNetworkLeft").slider("value", parseFloat(channelgains[channel].GainNetworkLeft));
+				$("#GainNetworkRight").slider("value", parseFloat(channelgains[channel].GainNetworkRight));
+				$("#GainDecoderLeft").slider("value", parseFloat(channelgains[channel].GainDecoderLeft));
+				$("#GainDecoderRight").slider("value", parseFloat(channelgains[channel].GainDecoderRight));
+				
+				networkgainenabled = (channelgains[channel].NetworkGainEnable == 'On');
+				//If networkgains disabled, disable the sliders
+				$("#NetworkGainEnable").attr('checked', networkgainenabled );
+				$( "#GainNetworkLeft" ).slider('option','disabled', !networkgainenabled );
+				$( "#GainNetworkRight" ).slider('option','disabled', !networkgainenabled );
+				
+				$("#AudioMute").attr('checked', (channelgains[channel].AudioMute == 'On'));
+				
+				levelmatchingenabled  = (channelgains[channel].LevelMatchingEnable== 'On')
+				$("#LevelMatchingEnable").attr('checked', levelmatchingenabled  );
+				$( "#GainNetworkLeft" ).slider('option','disabled', levelmatchingenabled  );
+				$( "#GainNetworkRight" ).slider('option','disabled', levelmatchingenabled  );
+	
+				if( channel == iChannel++)
+				{
+					Initialized = true;
+					return false;
+				}
+			})
+		})
+		.done(function() {  })
+		.fail(function() {  })
+		.always(function() {  });
+		//This initializes the sliders, and updates the server when they change
+		$( "#GainNetworkLeft" ).slider({max:30, min:-85, step:0.5, disabled:true,
+			change:function(event,ui)
+			{
+			    channelgains[channel].GainNetworkLeft = ui.value;
+				$('#GainNetworkLeftValue').text(ui.value);
+				SendToServer();
+			}
+			});
+		$( "#GainNetworkRight" ).slider({max:30, min:-85, step:0.5, 
+			change:function(event,ui)
+			{
+			    channelgains[channel].GainNetworkRight= ui.value;
+				$('#GainNetworkRightValue').text(ui.value);
+				SendToServer();
+			}
+			});
+		$( "#GainDecoderLeft" ).slider({max:30, min:-85, step:0.5, 
+			change:function(event,ui)
+			{
+			    channelgains[channel].GainDecoderLeft= ui.value;
+				$('#GainDecoderLeftValue').text(ui.value);
+				SendToServer();
+			}
+			});
+		$( "#GainDecoderRight" ).slider({max:30, min:-85, step:0.5, 
+			change:function(event,ui)
+			{
+			    channelgains[channel].GainDecoderRight= ui.value;
+				$('#GainDecoderRightValue').text(ui.value);
+				SendToServer();
+			}
+			});
+		function SendToServer  () {
+		    if(Initialized == true)
+		    {
+		    var jqxhr = $.ajax({
+		            type: 'POST',
+		            dataType: 'json',
+		            url: 'save',
+		            data: { Update:"Gains", channelgains: channelgains[channel] },
+		            beforeSend: function(){},
+		            success: function(msg) {},
+		            error:function (){} 
+		          });
+		    }
+		}
+		//These three functions handle when the controls on the page change, and making them update the server
+		$('#AudioMute').change (function () {
+	        channelgains[channel].AudioMute= $("#AudioMute").is(':checked') ? 'On' : 'Off';
+			SendToServer();
+		});
+		$('#NetworkGainEnable').change (function () {
+	        networkgainenabled = $("#NetworkGainEnable").is(':checked');
+	        channelgains[channel].NetworkGainEnable = networkgainenabled ? 'On' : 'Off';
+	        $( "#GainNetworkLeft" ).slider('option','disabled', !networkgainenabled );
+	        $( "#GainNetworkRight" ).slider('option','disabled', !networkgainenabled );
+			SendToServer();
+		});
+		$('#LevelMatchingEnable').change (function () {
+			levelmatchingenabled = $("#LevelMatchingEnable").is(':checked');
+	        channelgains[channel].LevelMatchingEnable= levelmatchingenabled ? 'On' : 'Off';
+	        $( "#GainDecoderLeft" ).slider('option','disabled', levelmatchingenabled  );
+	        $( "#GainDecoderRight" ).slider('option','disabled', levelmatchingenabled  );
+			SendToServer();
+		});
+		setTimeout(DisableSliders,100);
+		$('#channel').html(channel); //channel number from the url
+		$("#breadcrumbs span").html(" Channel: " + channel); //update the breadcrumbs field
+		$("#save-button").click(function(event) {
+          event.preventDefault();
+          channelparams[channel].channelname = $("#channelname").val();
+          channelparams[channel].zonename = $("#zonename").val();
+          channelparams[channel].trigger = $("#trigger").val();
+          channelparams[channel].cutoff= $("#cutoff").val();
+          channelparams[channel].entrydelim= $("#entrydelim").val();
+          channelparams[channel].exitdelim= $("#exitdelim").val();
+          channelparams[channel].exitflag= $("#exitflag").val();
+          channelparams[channel].genlock= $("#genlock").val();
+          channelparams[channel].agcdec= $("#agcdec").val();
+          channelparams[channel].preroll= $("#preroll").val();
+          channelparams[channel].postblack= $("#postblack").val();
+          channelparams[channel].toneone= $("#toneone").val();
+          channelparams[channel].tonetwo= $("#tonetwo").val();
+          channelparams[channel].tonethree= $("#tonethree").val();
+          channelparams[channel].tonefour= $("#tonefour").val();
+          channelparams[channel].swbacktime= $("#swbacktime").val();
+          channelparams[channel].latestart= $("#latestart").val();
+          channelparams[channel].earlystop= $("#earlystop").val();
+          channelparams[channel].pal= $("#pal").val();
+          channelparams[channel].frm_sec= $("#frm_sec").val();
+          channelparams[channel].bypass= $("#bypass").val();
+          channelparams[channel].vnet_agc= $("#vnet_agc").val();
+          channelparams[channel].vdec_agc= $("#vdec_agc").val();
+          
+          $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: 'save',
+            data: { Update:"Channel", channelparams : channelparams[channel] },
+            beforeSend: function(){},
+            success: function(msg) {},
+            error:function (){} 
+          });
+        });
+    });
+    </script>
+	<div id="wrapper">
+    	<!-- h1 tag stays for the logo, you can use the a tag for linking the index page -->
+    	<h1><a href="#"><span>DVC Lancaster Channel Settings</span></a></h1>
+        
+        <!-- You can name the links with lowercase, they will be transformed to uppercase by CSS, we prefered to name them with uppercase to have the same effect with disabled stylesheet -->
+        <ul id="mainNav">
+        	<li><a href="index.html">System Status</a></li> <!-- Use the "active" class for the active menu item  -->
+        	<li><a href="system.html">System Settings</a></li>
+        	<li><a href="splicer.html">Splicer Settings</a></li>
+        	<li><a href="channel.html" class="active">Channel Settings</a></li>
+        	<li class="logout"><a href="#">LOGOUT</a></li>
+        </ul>
+        <!-- // #end mainNav -->
+        
+        <div id="containerHolder">
+			<div id="container">
+        		<div id="sidebar">
+                	<ul class="sideNav">
+						<li><a href="channel.html?channel=0">Channel 0</a></li>
+                    	<li><a href="channel.html?channel=1">Channel 1</a></li>
+                    	<li><a href="channel.html?channel=2">Channel 2</a></li>
+                    	<li><a href="channel.html?channel=3">Channel 3</a></li>
+                    </ul>
+                    <!-- // .sideNav -->
+                </div>    
+                <!-- // #sidebar -->
+                
+                <!-- h2 stays for breadcrumbs -->
+                <div id="breadcrumbs"><h2><a href="channel.html">Channel Configuration</a> &raquo; <a href="#" class="active"><span></span></a></h2></div>
+                <div id="main">
+					<h3>Channel Settings</h3>
+						<table class="parametersTable"><tbody>
+						<tr>
+						<td>Channel Name:</td><td><input type='text' id='channelname' value='' /></td>
+										<td></td>
+						</tr>
+						<tr class="odd">
+						<td>Zone Name:</td><td><input type='text' id='zonename' value='' /></td>
+										<td></td>
+						</tr>
+						<tr>
+						<td>Trigger:</td><td><select id="trigger">
+										<option>off</option>
+										<option>dtmf</option>
+										<option>contact</option>
+										<option>both</option>
+										</select>
+										</td>
+										<td></td>
+						</tr>
+						<tr class="odd">
+						<td>Cutoff:</td><td><input type='text' id='cutoff' value='' /></td>
+										<td></td>
+						</tr>
+						<tr>
+						<td>Entry Tone Deliminator:</td><td><input type='text' id='entrydelim' value='' /></td>
+										<td></td>
+						</tr>
+						<tr class="odd">
+						<td>Exit Tone Deliminator:</td><td><input type='text' id='exitdelim' value='' /></td>
+										<td></td>
+						</tr>
+						<tr>
+						<td>Exit Flag:</td><td><select id="exitflag">
+										<option>ignore</option>
+										<option>enable</option>
+										</select>
+										</td>
+										<td></td>
+						</tr>
+						<tr class="odd">
+						<td>Genlock:</td><td><select id="genlock">
+										<option>genlock_off</option>
+										<option>genlock_fast</option>
+										<option>genlock_auto</option>
+										</select>
+										</td>
+										<td></td>
+
+						</tr>
+						<tr  class="odd">
+						<td>Decoder AGC:</td><td><select id="agcdec">
+										<option>agc_dec_on</option>
+										<option>agc_dec_off</option>
+										<option>agc_dec_match</option>
+										</select>
+										</td>
+										<td></td>
+						</tr>
+						<tr>
+                            <td>
+                            <p class="style2">Audio Mute<input type='checkbox' id='AudioMute'  checked="unchecked" name="AudioMute" /></p>
+							</td>
+                            <td>Audio Gain Left</td>
+                            <td>Audio Gain Right</td>
+                        </tr>
+						<tr class="odd">
+                            <td>
+							<p class="style2">Network Gain <br />
+							Enable <input type='checkbox' id='NetworkGainEnable'  checked="checked" name="NetworkGainEnable" /></p>
+							</td>
+                            <td style="height: 29px" class="style3">
+                            <div class="slider" id="GainNetworkLeft"></div>
+                            </td>
+                            <td style="height: 29px" class="style3">
+                            <div class="slider" id="GainNetworkRight"></div>
+							</td>
+                        </tr>
+						<tr>
+                            <td>
+							&nbsp;</td>
+                            <td style="height: 29px" class="style3">
+                            <span id="GainNetworkLeftValue">0</span>dB
+							</td>
+                            <td style="height: 29px" class="style3">
+                            <span id="GainNetworkRightValue">0</span>dB
+							</td>
+                        </tr>
+						<tr class="odd">
+                            <td>
+							<p class="style2">Decoder<br />
+							Level Match <input type='checkbox' id='LevelMatchingEnable'  checked="checked" name="LevelMatchingEnable" /></p>
+							</td>
+                            <td style="height: 29px" class="style3">
+                            <div class="slider" id="GainDecoderLeft"></div>
+                            </td>
+                            <td style="height: 29px" class="style3">
+                            <div class="slider" id="GainDecoderRight"></div>
+							</td>
+                        </tr>
+						<tr>
+                            <td>
+							&nbsp;</td>
+                            <td style="height: 29px" class="style3">
+                            <span id="GainDecoderLeftValue">0</span>dB
+							</td>
+                            <td style="height: 29px" class="style3">
+                            <span id="GainDecoderRightValue">0</span>dB
+							</td>
+                        </tr>
+						<tr class="odd">
+						<td>Preroll:</td><td><input type='text' id='preroll' value='' /></td>
+						<td></td>
+						</tr>
+						<tr>
+						<td>Post Black:</td><td><input type='text' id='postblack' value='' /></td>
+						<td></td>
+						</tr>
+						<tr class="odd">
+						<td>Tone One:</td><td><input type='text' id='toneone' value='' /></td>
+						<td></td>
+						</tr>
+						<tr>
+						<td>Tone Two:</td><td><input type='text' id='tonetwo' value='' /></td>
+						<td></td>
+						</tr>
+						<tr class="odd">
+						<td>Tone Three:</td><td><input type='text' id='tonethree' value='' /></td>
+						<td></td>
+						</tr>
+						<tr>
+						<td>Tone Four:</td><td>
+							<input type='text' id='tonefour' value='' /></td>
+						<td></td>
+						</tr>
+						<tr>
+						<td>Switch Back Time:</td><td>
+							<input type='text' id='swbacktime' value='' /></td>
+						<td></td>
+							</tr>
+						<tr>
+						<td>Late Start:</td><td><input type='text' id='latestart' value='' /></td>
+						<td></td>
+						</tr>
+						<tr class="odd">
+						<td>Early Stop:</td><td><input type='text' id='earlystop' value='' /></td>
+						<td></td>
+						</tr>
+						<tr>
+						<td>Pal:</td><td><select id="pal">
+										<option>ntsc</option>
+										<option>pal</option>
+										</select>
+										</td>
+						<td></td>
+						</tr>
+						<tr class="odd">
+						<td>Frames Per Second:</td><td><input type='text' id='frm_sec' value='' /></td>
+						<td></td>
+						</tr>
+						<tr>
+						<td>Channel Bypass:</td><td><select id="bypass">
+										<option>channel_enable</option>
+										<option>channel_bypass</option>
+										</select>
+										</td>
+						<td></td>
+						</tr>
+						<tr class="odd">
+						<td>Enable Network Video AGC:</td><td><input type='checkbox' id='vnet_agc' name="vnet_agc" /></td>
+						<td></td>
+						</tr>
+						<tr class="odd">
+						<td>Enable Decoder Video AGC:</td><td><input type='checkbox' id='vdec_agc' name="vdec_agc" /></td>
+						<td></td>
+						</tr>
+						</tbody></table>
+                        <p>&nbsp;</p>
+     				<input type="submit" value="Save" id="save-button"> </input>
+    			</div>
+                <!-- // #main -->
+                <div class="clear"></div>
+            </div>
+            <!-- // #container -->
+        </div>	
+        <!-- // #containerHolder -->
+        
+        <p id="footer"><a href="http://www.digitalvideocommunications.com">Digital Video Communications, Inc.</a></p>
+    </div>
+    <!-- // #wrapper -->
+</body>
+</html>

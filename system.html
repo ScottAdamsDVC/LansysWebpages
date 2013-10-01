@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Lancaster Configuration System Status</title>
+
+<!-- CSS -->
+<link href="style/css/transdmin.css" rel="stylesheet" type="text/css" media="screen" />
+<!--[if IE 6]><link rel="stylesheet" type="text/css" media="screen" href="style/css/ie6.css" /><![endif]-->
+<!--[if IE 7]><link rel="stylesheet" type="text/css" media="screen" href="style/css/ie7.css" /><![endif]-->
+
+<!-- JavaScripts-->
+<script type="text/javascript" src="style/js/jquery.js"></script>
+<script type="text/javascript" src="style/js/jNice.js"></script>
+<script type="text/javascript" src="js/params.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript">
+
+   $(document).ready(function() {
+   
+       	var string = 'Initial';
+    	var jqxhr = $.get("request", function(data) {
+			var $System = $(data).find('System');
+			string = $System.attr('systemname');
+			$("#systemname").val (string );
+			string = $System.attr('Location');
+			$("#Location").val (string );
+			string = $System.attr('Logfile');
+			$("#Logfile").val (string );
+			string  = $System.attr('InvalidTones');
+			if(string == 'On') 
+			$("#InvalidTones").val ('Send' );
+			else
+			$("#InvalidTones").val ("Don't Send" );
+			string  = $System.attr('Attach');
+			$("#Attach").attr('checked', (string == 'On'));
+			string  = $System.attr('Buzzer');
+			$("#Buzzer").attr('checked', (string == 'On'));
+			string  = $System.attr('ToneBuzzer');
+			$("#ToneBuzzer").attr('checked', (string == 'On'));
+			string = $System.attr('DebugLevel');
+			$("#DebugLevel").val (string );
+			string = $System.attr('Fan');
+			$("#Fan").val (string );
+			string = $System.attr('FanSpeed');
+			$("#FanSpeed").val (string );
+			string = $System.attr('Console');
+			$("#Console").val (string );
+		});
+
+    $("#save-button").click(function(event) {
+          event.preventDefault();
+          
+          systemparams.systemname= $("#systemname").val();
+          systemparams.Logfile= $("#Logfile").val();
+          systemparams.Location= $("#Location").val();
+          systemparams.InvalidTones= ($("#InvalidTones").val() == 'Send') ? 'On' : 'Off';
+          systemparams.Attach = $("#Attach").is(':checked') ? 'On' : 'Off';
+          systemparams.Buzzer= $("#Buzzer").is(':checked') ? 'On' : 'Off';
+          systemparams.ToneBuzzer= $("#ToneBuzzer").is(':checked') ? 'On' : 'Off';
+          systemparams.DebugLevel= $("#DebugLevel").val();
+          systemparams.Fan= $("#Fan").val();
+          systemparams.FanSpeed= $("#FanSpeed").val();
+          systemparams.Console= $("#Console").val();
+          
+          $.ajax({
+            type: 'POST',
+            dataType: 'xml',
+            url: 'save',
+            data: {Update:"System", systemparams: systemparams },
+            beforeSend: function(){},
+            success: function(msg) {},
+            error:function (){} 
+          });
+        });
+        function SendToServer  (command) {
+        	var datatosend = 
+        	{
+        	Action: 'command'
+        	};
+        	datatosend.Action = command;
+		    var jqxhr = $.ajax({
+		            type: 'POST',
+		            dataType: 'text',
+		            url: 'Action',
+		            data: { Action:command },
+		            beforeSend: function(){},
+		            success: function(msg) {},
+		            error:function (){} 
+		          });
+		}
+
+	     $("#Reset-Counts").click(function(event) {
+	     	SendToServer('Reset-Counts');
+	     });
+	     $("#Restart-App").click(function(event) {
+	     	SendToServer('Restart-App');
+	     });
+	     $("#Reboot").click(function(event) {
+	     	SendToServer('Reboot');
+	     });
+     });
+
+
+    </script>
+	<div id="wrapper">
+    	<!-- h1 tag stays for the logo, you can use the a tag for linking the index page -->
+    	<h1><a href="#"><span>DVC Lancaster System Status</span></a></h1>
+        
+        <!-- You can name the links with lowercase, they will be transformed to uppercase by CSS, we prefered to name them with uppercase to have the same effect with disabled stylesheet -->
+        <ul id="mainNav">
+        	<li><a href="index.html">System Status</a></li> <!-- Use the "active" class for the active menu item  -->
+        	<li><a href="system.html" class="active">System Settings</a></li>
+        	<li><a href="splicer.html">Splicer Settings</a></li>
+        	<li><a href="channel.html">Channel Settings</a></li>
+        	<li class="logout"><a href="#">LOGOUT</a></li>
+        </ul>
+        <!-- // #end mainNav -->
+        
+        <div id="containerHolder">
+			<div id="container">
+        		<div id="sidebar">
+                	<ul class="sideNav">
+                    	<li><a href="#" class="active"></a></li>
+                    </ul>
+                    <!-- // .sideNav -->
+                </div>    
+                <!-- // #sidebar -->
+                
+                <!-- h2 stays for breadcrumbs -->
+                <h2><a href="#">System Configuration</a> »</h2>
+                <div id="main">
+					<h3>System Configuration</h3>
+						<table class="parametersTable"><tbody>
+						<tr>
+						<td>System Name:</td><td><input type='text' id='systemname' value='' /></td>
+						</tr>
+						<tr class="odd">
+						<td>Location:</td><td><input type='text' id='Location' value='' /></td>
+						</tr>
+						<tr>
+						<td>Logfile:</td><td><input type='text' id='Logfile' value='' /></td>
+						</tr>
+						<tr class="odd">
+						<td>Send Invalid Tones:</td><td><select id="InvalidTones">
+										<option>Send</option>
+										<option>Don&#39;t Send</option>
+										</select>
+						</td>
+						</tr>
+						<tr>
+						<td>System Attach:</td><td>
+						<input type='checkbox' id='Attach' checked="checked" name="Attach" /></td>
+						</tr>
+						<tr class="odd">
+						<td>Alarm Buzzer:</td><td>
+						<input type='checkbox' id='Buzzer' checked="checked" name="Buzzer" /></td>
+							</tr>
+						<tr>
+						<td>Tone Buzzer:</td><td>
+						<input type='checkbox' id='ToneBuzzer'  checked="checked" name="ToneBuzzer" /></td>
+						</tr>
+						<tr class="odd">
+						<td>Fan Operation:</td><td>
+						<select id="Fan">
+										<option>Off</option>
+										<option>On</option>
+										<option>Auto</option>
+										</select>
+						</td>
+						</tr>
+						<tr>
+						<td>Fan Speed:</td><td>
+										<select id="FanSpeed">
+										<option>Slow</option>
+										<option>Fast</option>
+										</select>
+							</td>
+							</tr>
+						<tr class="odd">
+						<td>Debug Level (0x0000 - 0xFFFF:</td><td>
+						<input type='text' id='DebugLevel' value='' /></td>
+						</tr>
+						<tr>
+						<td>Console:</td><td>
+										<select id="Console">
+										<option>SOCA</option>
+										<option>SOCB</option>
+										</select></td>
+
+						</tr>
+						<tr class="odd">
+						<td>Action:</td><td>
+						<input type="submit" value="Reset Counts" id="Reset-Counts"> </input>
+						&nbsp;&nbsp;&nbsp;
+						<input type="submit" value="Restart App" id="Restart-App"> </input>
+						&nbsp;&nbsp;
+						<input type="submit" value="Reboot" id="Reboot"> </input>
+						</td>
+						</tr>
+						</tbody></table>
+                        <p>&nbsp;</p>
+     				<input type="submit" value="Save" id="save-button"> </input>
+    			</div>
+                <!-- // #main -->
+                <div class="clear"></div>
+            </div>
+            <!-- // #container -->
+        </div>	
+        <!-- // #containerHolder -->
+        
+        <p id="footer"><a href="http://www.digitalvideocommunications.com">
+		Digital Video Communications, Inc.</a></p>
+    </div>
+    <!-- // #wrapper -->
+</body>
+</html>
