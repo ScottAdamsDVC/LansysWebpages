@@ -58,7 +58,7 @@ RequestClass.prototype.SendChannelConfiguration = function(input){
 	xmlwriter.writeElementClose( 'Channel' );
 	xmlwriter.writeElementClose( 'Configuration' );
 	
-	console.log( xmlwriter.xml );
+	//console.log( xmlwriter.xml );
 	client.write(xmlwriter.xml);
 	xmlwriter.clear();
 
@@ -70,7 +70,7 @@ RequestClass.prototype.SendChannelGains = function(input){
 	xmlwriter.writeElementClose( 'Channel' );
 	xmlwriter.writeElementClose( 'Gains' );
 	
-	console.log( xmlwriter.xml );
+	//console.log( xmlwriter.xml );
 	client.write(xmlwriter.xml);
 	xmlwriter.clear();
 
@@ -88,7 +88,7 @@ RequestClass.prototype.SendSystemConfiguration = function(input){
 
 };
 RequestClass.prototype.SendAction = function(input){
-	console.log(input);
+	//console.log(input);
 	client.write('Action:'+input);
 };
 
@@ -102,7 +102,7 @@ RequestClass.prototype.RequestStatus = function(){
 var RequestObject = new(RequestClass);
 
 client.on('data', function(data) {
-    console.log('Socket received: ' + data);
+    //console.log('Socket received: ' + data);
     var strbegin = data.toString();
     strbegin = strbegin.substring(0,8);
     if(strbegin == '<Status>')
@@ -112,11 +112,11 @@ client.on('data', function(data) {
 });
 
 client.on('close', function() {
-	console.log('Socket close');
+	//console.log('Socket close');
 	setTimeout(RequestObject.OpenSocket,5000);
 });
 client.on('connect', function() {
-	console.log('Socket connected');
+	//console.log('Socket connected');
 	RequestObject.RequestConfiguration();
 	RequestObject.RequestStatus();
 });

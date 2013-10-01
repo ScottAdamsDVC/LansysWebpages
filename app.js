@@ -1,11 +1,12 @@
 var express = require('express'),
 	myapi = require('./request.js').Request;
 var app = express();
-app.use(express.static('/mnt/Documents/DVC/nodejs/Admin'));
+//app.use(express.static('/mnt/Documents/DVC/nodejs/Admin'));
+app.use(express.static('/home/root/nodejs/Admin'));
 app.use(express.bodyParser()); // Required for parsing POST
 
 app.get('/request', function(req, res){
-    console.log("received get: app.get('/request', function(req, res){ ... }");
+    //console.log("received get: app.get('/request', function(req, res){ ... }");
     //Get it again from the server in case anything changed
     myapi.RequestConfiguration();
     //Just send the string we got the last time
@@ -22,12 +23,12 @@ app.get('/status', function(req, res){
 });
 
 app.post('/save', function(req, res){
-    console.log("received POST: app.post('/save', function(req, res){ ... }");
+    //console.log("received POST: app.post('/save', function(req, res){ ... }");
     
     if (req.param("Update") == "System")
     {
     	myapi.SendSystemConfiguration(req.param("systemparams"));
-    	console.log("Got " + JSON.stringify(req.param("systemparams")));
+    	//console.log("Got " + JSON.stringify(req.param("systemparams")));
     }
     else if (req.param("Update") == "Splicer")
     {
@@ -47,10 +48,11 @@ app.post('/save', function(req, res){
 
 });
 app.post('/Action', function(req, res){
-    console.log("received POST: app.post('/Action', function(req, res){ ... }");
+    //console.log("received POST: app.post('/Action', function(req, res){ ... }");
     myapi.SendAction (req.param('Action'));
 });
 
 myapi.OpenSocket();
 
-app.listen(3000);
+//app.listen(3000);
+app.listen(80);

@@ -25,7 +25,7 @@
 </head>
 
 <body>
-    <script type="text/javascript" src="js/jquery-1.10.0.min.js"></script>
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="js/jquery.getParams.js"></script>
     <script type="text/javascript" src="js/params.js"></script>
     <script type="text/javascript" src="js/jquery-ui.js"></script>
@@ -56,9 +56,9 @@
 				var string = 'Initial';
 				var enabled = true;
 				string = $Channel.attr('channelname');
-				$("#channelname").text (string );
+				$("#channelname").val (string );
 				string = $Channel.attr('zonename');
-				$("#zonename").text (string );
+				$("#zonename").val (string );
 				string = $Channel.attr('trigger');
 				$("#trigger").val (string );
 				string = $Channel.attr('cutoff');
